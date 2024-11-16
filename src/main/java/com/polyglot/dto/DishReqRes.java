@@ -7,17 +7,19 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class QuesAnsReqRes {
+public class DishReqRes {
 
     private int statusCode;
     private String error;
     private String message;
 
-    private Integer questionId;
-    private String question;
-    private String answer;
-    private Integer courseId;
-    private String questionType;
+    private Integer dishId;
+    private String dishName;
+    private String dishPrice;
+    private Integer restaurantId;
+    private String dishType;
+    private String dishDescription;
+    private String dishCuisine;
 
     private Integer userId;
     private String response;

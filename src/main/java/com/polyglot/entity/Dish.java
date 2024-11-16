@@ -11,11 +11,12 @@ public class Dish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private long price;
+    private String price;
     private String description;
     private String dishType; // 1 for veg, 2 for non veg
-    private Integer restaurantId;
     private String cuisine;
+
+    private Integer restaurantId;
 
 
 

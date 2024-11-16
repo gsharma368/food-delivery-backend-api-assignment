@@ -16,6 +16,7 @@ public class Restaurant {
     private String description;
     private String content;
 
+
     @ElementCollection
-    private List<Integer> menu;
+    private List<Integer> menuDishes;
 }

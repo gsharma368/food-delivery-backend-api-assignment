@@ -1,12 +1,11 @@
 package com.polyglot.controller;
 
-import com.polyglot.dto.CourseReqRes;
-import com.polyglot.dto.ProgessReqRes;
-import com.polyglot.dto.QuesAnsReqRes;
+import com.polyglot.dto.DishReqRes;
 import com.polyglot.dto.ReqRes;
+import com.polyglot.dto.RestaurantReqRes;
+import com.polyglot.entity.Dish;
 import com.polyglot.entity.Restaurant;
 import com.polyglot.entity.OurUsers;
-import com.polyglot.entity.Dish;
 import com.polyglot.service.UsersManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,35 +42,35 @@ public class UserManagementController {
 
     }
 
-//    @GetMapping("/admin/get-users/{userId}")
-//    public ResponseEntity<ReqRes> getUSerByID(@PathVariable Integer userId){
-//        return ResponseEntity.ok(usersManagementService.getUsersById(userId));
-//
-//    }
+    @GetMapping("/admin/get-users/{userId}")
+    public ResponseEntity<ReqRes> getUSerByID(@PathVariable Integer userId){
+        return ResponseEntity.ok(usersManagementService.getUsersById(userId));
 
-//    @PutMapping("/admin/update/{userId}")
-//    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody OurUsers reqres){
-//        return ResponseEntity.ok(usersManagementService.updateUser(userId, reqres));
-//    }
-//
-//    @GetMapping("/adminuser/get-profile")
-//    public ResponseEntity<ReqRes> getMyProfile(){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String email = authentication.getName();
-//        ReqRes response = usersManagementService.getMyInfo(email);
-//        return  ResponseEntity.status(response.getStatusCode()).body(response);
-//    }
-//
-//    @DeleteMapping("/admin/delete/{userId}")
-//    public ResponseEntity<ReqRes> deleteUSer(@PathVariable Integer userId){
-//        return ResponseEntity.ok(usersManagementService.deleteUser(userId));
-//    }
-//
-//    @GetMapping("/get-all-courses")
-//    public ResponseEntity<List<Restaurant>> getAllCourses(){
-//        return ResponseEntity.ok(usersManagementService.getAllCourses());
-//    }
-//
+    }
+
+    @PutMapping("/admin/update/{userId}")
+    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody OurUsers reqres){
+        return ResponseEntity.ok(usersManagementService.updateUser(userId, reqres));
+    }
+
+    @GetMapping("/adminuser/get-profile")
+    public ResponseEntity<ReqRes> getMyProfile(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        ReqRes response = usersManagementService.getMyInfo(email);
+        return  ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @DeleteMapping("/admin/delete/{userId}")
+    public ResponseEntity<ReqRes> deleteUSer(@PathVariable Integer userId){
+        return ResponseEntity.ok(usersManagementService.deleteUser(userId));
+    }
+
+    @GetMapping("/get-all-restaurants")
+    public ResponseEntity<List<Restaurant>> getAllCourses(){
+        return ResponseEntity.ok(usersManagementService.getAllRestaurants());
+    }
+
 //    @GetMapping("/get-my-courses")
 //    public ResponseEntity<List<Restaurant>> getMyCourses(){
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -85,17 +84,17 @@ public class UserManagementController {
 //        String email = authentication.getName();
 //        return ResponseEntity.ok(usersManagementService.getMyProgress(email));
 //    }
-//
-//    @GetMapping("/get-course/{courseId}")
-//    public ResponseEntity<Restaurant> getCourseById(@PathVariable Integer courseId){
-//        return ResponseEntity.ok(usersManagementService.getCourseById(courseId));
-//    }
-//
-//    @PostMapping("/course")
-//    public ResponseEntity<CourseReqRes> addMasterCourse(@RequestBody CourseReqRes courseReqRes){
-//        return ResponseEntity.ok(usersManagementService.addMasterCourse(courseReqRes));
-//    }
-//
+
+    @GetMapping("/get-restaurant/{restaurantId}")
+    public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Integer restaurantId){
+        return ResponseEntity.ok(usersManagementService.getRestaurantById(restaurantId));
+    }
+
+    @PostMapping("/restaurant")
+    public ResponseEntity<RestaurantReqRes> addMasterCourse(@RequestBody RestaurantReqRes restaurantReqRes){
+        return ResponseEntity.ok(usersManagementService.addMasterRestaurant(restaurantReqRes));
+    }
+
 //    @PostMapping("/course/{courseId}/enroll")
 //    public ResponseEntity<ReqRes> enrollUserInThisCourse(@PathVariable Integer courseId){
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -116,22 +115,22 @@ public class UserManagementController {
 //        String email = authentication.getName();
 //        return ResponseEntity.ok(usersManagementService.unenrollUserFromAllCourses(email));
 //    }
-//
-//    @PostMapping("/add-question")
-//    public ResponseEntity<QuesAnsReqRes> addQuestionsToCourse(@RequestBody QuesAnsReqRes quesAnsReqRes){
-//        return ResponseEntity.ok(usersManagementService.addQuestionToTheCourse(quesAnsReqRes));
-//    }
-//
+
+    @PostMapping("/add-dish")
+    public ResponseEntity<DishReqRes> addQuestionsToCourse(@RequestBody DishReqRes dishReqRes){
+        return ResponseEntity.ok(usersManagementService.addDishToTheRestaurant(dishReqRes));
+    }
+
 //    @PutMapping("/edit-question/{questionId}")
 //    public ResponseEntity<QuesAnsReqRes> editQuestionOfACourse(@PathVariable Integer questionId, @RequestBody QuesAnsReqRes quesAnsReqRes){
 //        return ResponseEntity.ok(usersManagementService.editQuestionOfTheCourse(questionId, quesAnsReqRes));
 //    }
-//
-//    @GetMapping("/course/{courseId}/get-questions")
-//    public ResponseEntity<List<Dish>> getQuestionsOfTheCourseId(@PathVariable Integer courseId){
-//        return ResponseEntity.ok(usersManagementService.getQuestionsOfTheCourseId(courseId));
-//    }
-//
+
+    @GetMapping("/course/{restaurantId}/get-menu")
+    public ResponseEntity<List<Dish>> getQuestionsOfTheCourseId(@PathVariable Integer restaurantId){
+        return ResponseEntity.ok(usersManagementService.getMenuOfTheRestaurantId(restaurantId));
+    }
+
 //    @PostMapping("/attempt-question")
 //    public ResponseEntity<QuesAnsReqRes> attemptQuestion(@RequestBody QuesAnsReqRes quesAnsReqRes){
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CourseReqRes {
+public class RestaurantReqRes {
     private String title;
     private String description;
     private String content;

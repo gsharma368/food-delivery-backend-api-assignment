@@ -1,6 +1,8 @@
 package com.polyglot.service;
 
+import com.polyglot.dto.DishReqRes;
 import com.polyglot.dto.ReqRes;
+import com.polyglot.dto.RestaurantReqRes;
 import com.polyglot.entity.Restaurant;
 import com.polyglot.entity.OurUsers;
 import com.polyglot.entity.Dish;
@@ -138,5 +140,173 @@ public class UsersManagementService {
         }
     }
 
+    public ReqRes getUsersById(Integer id) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            OurUsers usersById = usersRepo.findById(id).orElseThrow(() -> new RuntimeException("User Not found"));
+            reqRes.setOurUsers(usersById);
+            reqRes.setStatusCode(200);
+            reqRes.setMessage("Users with id '" + id + "' found successfully");
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+        }
+        return reqRes;
+    }
 
+    public ReqRes deleteUser(Integer userId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Optional<OurUsers> userOptional = usersRepo.findById(userId);
+            if (userOptional.isPresent()) {
+                usersRepo.deleteById(userId);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("User deleted successfully");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("User not found for deletion");
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while deleting user: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqRes updateUser(Integer userId, OurUsers updatedUser) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Optional<OurUsers> userOptional = usersRepo.findById(userId);
+            if (userOptional.isPresent()) {
+                OurUsers existingUser = userOptional.get();
+                existingUser.setEmail(updatedUser.getEmail());
+                existingUser.setName(updatedUser.getName());
+                existingUser.setCity(updatedUser.getCity());
+                existingUser.setRole(updatedUser.getRole());
+
+                // Check if password is present in the request
+                if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                    // Encode the password and update it
+                    existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+                }
+
+                OurUsers savedUser = usersRepo.save(existingUser);
+                reqRes.setOurUsers(savedUser);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("User updated successfully");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("User not found for update");
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while updating user: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqRes getMyInfo(String email){
+        ReqRes reqRes = new ReqRes();
+        try {
+            Optional<OurUsers> userOptional = usersRepo.findByEmail(email);
+            if (userOptional.isPresent()) {
+                reqRes.setOurUsers(userOptional.get());
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("User not found for update");
+            }
+
+        }catch (Exception e){
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while getting user info: " + e.getMessage());
+        }
+        return reqRes;
+
+    }
+
+    public RestaurantReqRes addMasterRestaurant(RestaurantReqRes courseReqRes) {
+        RestaurantReqRes resp = new RestaurantReqRes();
+
+        try {
+            Restaurant addRestaurant = new Restaurant();
+            addRestaurant.setTitle(courseReqRes.getTitle());
+            addRestaurant.setContent(courseReqRes.getContent());
+            addRestaurant.setDescription(courseReqRes.getDescription());
+            Restaurant restaurantResult = restaurantRepo.save(addRestaurant);
+            if (restaurantResult.getId()>0) {
+                resp.setRestaurant((restaurantResult));
+                resp.setMessage("Restaurant Saved Successfully");
+                resp.setStatusCode(200);
+            }
+
+        }catch (Exception e){
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
+
+    public List<Restaurant> getAllRestaurants() {
+        List<Restaurant> result = restaurantRepo.findAll();
+        return result;
+    }
+
+    public Restaurant getRestaurantById(Integer restaurantId) {
+        Optional<Restaurant> courseOptional = restaurantRepo.findById(restaurantId);
+        return courseOptional.get();
+    }
+
+    public DishReqRes addDishToTheRestaurant(DishReqRes dishReqRes) {
+        DishReqRes resp = new DishReqRes();
+
+        try {
+            Dish addDish = new Dish();
+            addDish.setName(dishReqRes.getDishName());
+            addDish.setPrice(dishReqRes.getDishPrice());
+            addDish.setDescription(dishReqRes.getDishDescription());
+            addDish.setDishType(dishReqRes.getDishType());
+            addDish.setCuisine(dishReqRes.getDishCuisine());
+
+            Dish addedDish = dishRepo.save(addDish);
+
+            // Added the question to the course
+            Optional<Restaurant> restaurantOptional = restaurantRepo.findById(dishReqRes.getRestaurantId());
+            List<Integer> menuDishesIds = new ArrayList<>(restaurantOptional.get().getMenuDishes());
+            menuDishesIds.add(addedDish.getId());
+
+            restaurantOptional.get().setMenuDishes(menuDishesIds);
+            Restaurant savedRestaurant = restaurantRepo.save(restaurantOptional.get());
+
+            if (addedDish.getId()>0) {
+                resp.setDishName(addedDish.getName());
+                resp.setDishPrice(addedDish.getPrice());
+                resp.setDishType(addedDish.getDishType());
+                resp.setDishDescription(addedDish.getDescription());
+                resp.setDishCuisine(addedDish.getCuisine());
+
+                resp.setMessage("Dish Added Successfully to the Restaurant Content");
+                resp.setStatusCode(200);
+            }
+
+        }catch (Exception e){
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
+
+    public List<Dish> getMenuOfTheRestaurantId(Integer restaurantId) {
+        Optional<Restaurant> restaurantOptional = restaurantRepo.findById(restaurantId);
+        List<Integer> menuOfRestaurant = restaurantOptional.get().getMenuDishes();
+        List<Dish> menuDishes = new ArrayList<>();
+        for(Integer dishId : menuOfRestaurant){
+            Optional dishOptional = dishRepo.findById(dishId);
+            if(dishOptional.isPresent()){
+                menuDishes.add((Dish) dishOptional.get());
+            }
+        }
+        return menuDishes;
+    }
 }
