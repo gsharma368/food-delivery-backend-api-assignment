@@ -71,6 +71,11 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.getAllRestaurants());
     }
 
+    @DeleteMapping("/restaurant/{restaurantId}")
+    public ResponseEntity<ReqRes> deleteRestaurant(@PathVariable Integer restaurantId){
+        return ResponseEntity.ok(usersManagementService.deleteRestaurantById(restaurantId));
+    }
+
 //    @GetMapping("/get-my-courses")
 //    public ResponseEntity<List<Restaurant>> getMyCourses(){
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -121,12 +126,21 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.addDishToTheRestaurant(dishReqRes));
     }
 
-//    @PutMapping("/edit-question/{questionId}")
-//    public ResponseEntity<QuesAnsReqRes> editQuestionOfACourse(@PathVariable Integer questionId, @RequestBody QuesAnsReqRes quesAnsReqRes){
-//        return ResponseEntity.ok(usersManagementService.editQuestionOfTheCourse(questionId, quesAnsReqRes));
-//    }
+    @GetMapping("/get-all-dishes")
+    public ResponseEntity<List<Dish>> addQuestionsToCourse(){
+        return ResponseEntity.ok(usersManagementService.getAllDishes());
+    }
+    @PutMapping("/edit-dish/{dishId}")
+    public ResponseEntity<DishReqRes> editQuestionOfACourse(@PathVariable Integer dishId, @RequestBody DishReqRes dishReqRes){
+        return ResponseEntity.ok(usersManagementService.editDishOfTheRestaurant(dishId, dishReqRes));
+    }
 
-    @GetMapping("/course/{restaurantId}/get-menu")
+    @DeleteMapping("/delete-dish/{dishId}")
+    public ResponseEntity<ReqRes> editQuestionOfACourse(@PathVariable Integer dishId){
+        return ResponseEntity.ok(usersManagementService.deleteDishByDishId(dishId));
+    }
+
+    @GetMapping("/restaurant/{restaurantId}/get-menu")
     public ResponseEntity<List<Dish>> getQuestionsOfTheCourseId(@PathVariable Integer restaurantId){
         return ResponseEntity.ok(usersManagementService.getMenuOfTheRestaurantId(restaurantId));
     }

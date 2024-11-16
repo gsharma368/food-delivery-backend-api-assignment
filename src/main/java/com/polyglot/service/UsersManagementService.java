@@ -268,6 +268,7 @@ public class UsersManagementService {
             addDish.setDescription(dishReqRes.getDishDescription());
             addDish.setDishType(dishReqRes.getDishType());
             addDish.setCuisine(dishReqRes.getDishCuisine());
+            addDish.setRestaurantId(dishReqRes.getRestaurantId());
 
             Dish addedDish = dishRepo.save(addDish);
 
@@ -285,6 +286,8 @@ public class UsersManagementService {
                 resp.setDishType(addedDish.getDishType());
                 resp.setDishDescription(addedDish.getDescription());
                 resp.setDishCuisine(addedDish.getCuisine());
+
+                resp.setRestaurantId(addedDish.getRestaurantId());
 
                 resp.setMessage("Dish Added Successfully to the Restaurant Content");
                 resp.setStatusCode(200);
@@ -308,5 +311,119 @@ public class UsersManagementService {
             }
         }
         return menuDishes;
+    }
+
+    public DishReqRes editDishOfTheRestaurant(Integer dishId, DishReqRes dishReqRes) {
+        DishReqRes resp = new DishReqRes();
+
+        try {
+
+            Optional<Dish> dishOptional = dishRepo.findById(dishId);
+            if (!dishOptional.isPresent()) {
+                resp.setStatusCode(404);
+                resp.setMessage("Dish not found for updation.");
+                return resp;
+            }
+
+            dishOptional.get().setName(dishReqRes.getDishName());
+            dishOptional.get().setPrice(dishReqRes.getDishPrice());
+            dishOptional.get().setDescription(dishReqRes.getDishDescription());
+            dishOptional.get().setDishType(dishReqRes.getDishType());
+            dishOptional.get().setCuisine(dishReqRes.getDishCuisine());
+            dishOptional.get().setRestaurantId(dishReqRes.getRestaurantId() );
+            Dish editedDish = dishRepo.save(dishOptional.get());
+
+//            Dish addDish = new Dish();
+//            addDish.setName(dishReqRes.getDishName());
+//            addDish.setPrice(dishReqRes.getDishPrice());
+//            addDish.setDescription(dishReqRes.getDishDescription());
+//            addDish.setDishType(dishReqRes.getDishType());
+//            addDish.setCuisine(dishReqRes.getDishCuisine());
+//            addDish.setRestaurantId(dishReqRes.getRestaurantId());
+//            Dish editedDish = dishRepo.save(addDish);
+
+            // Added the dish to the restaurant
+            Optional<Restaurant> restaurantOptional = restaurantRepo.findById(dishReqRes.getRestaurantId());
+            List<Integer> menuDishesIds = new ArrayList<>(restaurantOptional.get().getMenuDishes());
+            menuDishesIds.remove(Integer.valueOf(editedDish.getId()));
+            menuDishesIds.add(editedDish.getId());
+
+            restaurantOptional.get().setMenuDishes(menuDishesIds);
+            Restaurant savedRestaurant = restaurantRepo.save(restaurantOptional.get());
+
+            //dishRepo.deleteById(dishId);
+
+            if (editedDish.getId()>0) {
+                resp.setDishName(editedDish.getName());
+                resp.setDishPrice(editedDish.getPrice());
+                resp.setDishType(editedDish.getDishType());
+                resp.setDishDescription(editedDish.getDescription());
+                resp.setDishCuisine(editedDish.getCuisine());
+                resp.setRestaurantId(editedDish.getRestaurantId());
+                resp.setDishId(editedDish.getId());
+
+                resp.setMessage("Dish Edited Successfully to the Restaurant Content");
+                resp.setStatusCode(200);
+            }
+
+
+        }catch (Exception e){
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
+
+    public List<Dish> getAllDishes() {
+        List<Dish> result = dishRepo.findAll();
+        return result;
+    }
+
+    public ReqRes deleteDishByDishId(Integer dishId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Optional<Dish> dishOptional = dishRepo.findById(dishId);
+            if (dishOptional.isPresent()) {
+
+                // Delete the dish from the restaurant menu
+                Optional<Restaurant> restaurantOptional = restaurantRepo.findById(dishOptional.get().getRestaurantId());
+                List<Integer> menuDishesIds = new ArrayList<>(restaurantOptional.get().getMenuDishes());
+                menuDishesIds.remove(Integer.valueOf(dishId));
+
+                restaurantOptional.get().setMenuDishes(menuDishesIds);
+                Restaurant savedRestaurant = restaurantRepo.save(restaurantOptional.get());
+
+                dishRepo.deleteById(dishId);
+
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Dish deleted successfully");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("Dish not found for deletion");
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while deleting Dish: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqRes deleteRestaurantById(Integer restaurantId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Optional<Restaurant> dishOptional = restaurantRepo.findById(restaurantId);
+            if (dishOptional.isPresent()) {
+                restaurantRepo.deleteById(restaurantId);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Restaurant deleted successfully");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("Restaurant not found for deletion");
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while deleting Restaurant: " + e.getMessage());
+        }
+        return reqRes;
     }
 }
