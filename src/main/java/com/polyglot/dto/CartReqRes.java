@@ -2,28 +2,25 @@ package com.polyglot.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.polyglot.entity.CartItem;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DishReqRes {
+public class CartReqRes {
 
     private int statusCode;
     private String error;
     private String message;
 
     private Integer dishId;
-    private String dishName;
-    private Integer dishPrice;
-    private Integer restaurantId;
-    private String dishType;
-    private String dishDescription;
-    private String dishCuisine;
-
     private Integer userId;
+    private Integer cartId;
+    private Integer quantity;
+    private Integer cartPrice;
+    private List<CartItem> cartItems;
     private String response;
-    private String attemptDateTime;
-    private Integer marks;
-
 }

@@ -3,6 +3,8 @@ package com.polyglot.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -14,9 +16,12 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    //private Map<Integer, Integer> dishQuantityMap;
-    private Integer restaurantId;
+    @ElementCollection
+    private List<Integer> cartItems = new ArrayList<>();
 
-    private Integer price;
+    private Integer totalPrice = 0;
+
+    public Cart() {}
+
 
 }
