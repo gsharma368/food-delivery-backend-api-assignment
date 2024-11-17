@@ -129,58 +129,30 @@ public class CartService {
                 Optional<Cart> cartOptional = cartRepo.findById(userOptional.get().getCartId());
                 userCart = cartOptional.get();
             } else {
-                userCart = new Cart();
+                resp.setStatusCode(404);
+                resp.setMessage("Empty Cart for the User");
+                return resp;
             }
             List<Integer> userCartItems = userCart.getCartItems();
 
             List<CartItem> cartItemsFinal = new ArrayList<>();
             Integer totalPrice = userCart.getTotalPrice();
-            Integer priceToBeAddedForDishSelection = dishOptional.get().getPrice() * cartReqRes.getQuantity();
-            userCart.setTotalPrice(totalPrice + priceToBeAddedForDishSelection);
-            resp.setCartPrice(totalPrice + priceToBeAddedForDishSelection);
-            boolean isDishNotInCartItem = false;
+            resp.setCartPrice(totalPrice);
             for(Integer cartItemId : userCartItems){
                 Optional<CartItem> cartItemOptional = cartItemRepo.findById(cartItemId);
                 if(cartItemOptional.isPresent()){
-                    if(Objects.equals(cartItemOptional.get().getDishId(), cartReqRes.getDishId())){
-                        isDishNotInCartItem = true;
 
-                        Integer quantity = cartItemOptional.get().getQuantity();
-                        Integer price = cartItemOptional.get().getTotalPrice();
-                        quantity += cartReqRes.getQuantity();
+                    Integer quantity = cartItemOptional.get().getQuantity();
+                    Integer price = cartItemOptional.get().getTotalPrice();
 
-                        price += priceToBeAddedForDishSelection;
-                        cartItemOptional.get().setQuantity(quantity);
-                        cartItemOptional.get().setTotalPrice(price);
-                        CartItem cartItem = cartItemRepo.save(cartItemOptional.get());
-                    }
+                    cartItemOptional.get().setQuantity(quantity);
+                    cartItemOptional.get().setTotalPrice(price);
+                    CartItem cartItem = cartItemRepo.save(cartItemOptional.get());
+
                     cartItemsFinal.add(cartItemOptional.get());
                 }
             }
-            if(!isDishNotInCartItem){
-                CartItem newCartItem = new CartItem();
-                newCartItem.setDishId(cartReqRes.getDishId());
-                newCartItem.setName(dishOptional.get().getName());
-                newCartItem.setDishType(dishOptional.get().getDishType());
-                newCartItem.setDescription(dishOptional.get().getDescription());
-                newCartItem.setPrice(dishOptional.get().getPrice());
-                newCartItem.setCuisine(dishOptional.get().getCuisine());
 
-                newCartItem.setQuantity(cartReqRes.getQuantity());
-                newCartItem.setTotalPrice(priceToBeAddedForDishSelection);
-                totalPrice += priceToBeAddedForDishSelection;
-                newCartItem.setCartId(userCart.getId());
-                newCartItem = cartItemRepo.save(newCartItem);
-                cartItemsFinal.add(newCartItem);
-                List<Integer> userCartItemsIds = userCart.getCartItems();
-                userCartItemsIds.add(newCartItem.getId());
-                userCart.setCartItems(userCartItemsIds);
-                userCart = cartRepo.save(userCart);
-                newCartItem.setCartId(userCart.getId());
-                newCartItem = cartItemRepo.save(newCartItem);
-                userOptional.get().setCartId(newCartItem.getCartId());
-                OurUsers userUpdated = usersRepo.save(userOptional.get());
-            }
 
             resp.setUserId(cartReqRes.getUserId());
             resp.setStatusCode(200);

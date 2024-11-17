@@ -38,45 +38,11 @@ public class CartController {
     }
 
     // Get a specific cart by ID
-    @GetMapping("/{cartId}")
-    public ResponseEntity<CartReqRes> getCart(@PathVariable Integer cartId) {
-        CartReqRes cart = cartService.getCartById(cartId);
+    @GetMapping("")
+    public ResponseEntity<CartReqRes> getCart(@RequestBody CartReqRes cartReqRes) {
+        CartReqRes cart = cartService.getCartById(cartReqRes);
         return new ResponseEntity<>(cart, HttpStatus.OK);
     }
 
-//    // Get all carts (optional)
-//    @GetMapping
-//    public ResponseEntity<List<Cart>> getAllCarts() {
-//        List<Cart> carts = cartService.getAllCarts();
-//        return new ResponseEntity<>(carts, HttpStatus.OK);
-//    }
-//
-//    // Add an item to the cart
-//    @PostMapping("/{cartId}/items")
-//    public ResponseEntity<Cart> addItemToCart(@PathVariable Long cartId, @RequestBody CartItem cartItem) {
-//        Cart updatedCart = cartService.addItemToCart(cartId, cartItem);
-//        return new ResponseEntity<>(updatedCart, HttpStatus.OK);
-//    }
-//
-//    // Remove an item from the cart
-//    @DeleteMapping("/{cartId}/items/{itemId}")
-//    public ResponseEntity<Cart> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long itemId) {
-//        Cart updatedCart = cartService.removeItemFromCart(cartId, itemId);
-//        return new ResponseEntity<>(updatedCart, HttpStatus.OK);
-//    }
-//
-//    // Update the quantity of an item in the cart
-//    @PutMapping("/{cartId}/items/{itemId}")
-//    public ResponseEntity<Cart> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long itemId, @RequestParam int quantity) {
-//        Cart updatedCart = cartService.updateItemQuantity(cartId, itemId, quantity);
-//        return new ResponseEntity<>(updatedCart, HttpStatus.OK);
-//    }
-//
-//    // Delete a cart
-//    @DeleteMapping("/{cartId}")
-//    public ResponseEntity<Void> deleteCart(@PathVariable Long cartId) {
-//        cartService.deleteCart(cartId);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
 }
 
