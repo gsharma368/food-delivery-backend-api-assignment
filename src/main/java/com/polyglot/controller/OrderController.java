@@ -1,5 +1,6 @@
 package com.polyglot.controller;
 
+import com.polyglot.dto.OrderReqRes;
 import com.polyglot.entity.*;
 import com.polyglot.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,26 +11,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
     // Create an order from a cart
-//    @PostMapping("/checkout/{cartId}")
-//    public ResponseEntity<Order> checkout(@PathVariable Long cartId) {
-//        Order order = orderService.checkoutCart(cartId);
-//        return new ResponseEntity<>(order, HttpStatus.CREATED);
-//    }
-//
-//    // Get a specific order by ID
-//    @GetMapping("/{orderId}")
-//    public ResponseEntity<Order> getOrder(@PathVariable Long orderId) {
-//        Order order = orderService.getOrderById(orderId);
-//        return new ResponseEntity<>(order, HttpStatus.OK);
-//    }
-//
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderReqRes> checkout(@RequestBody OrderReqRes orderReqRes) {
+        OrderReqRes order = orderService.checkoutCartAndCreateOrder(orderReqRes);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
+
+    // Get a specific order by ID
+    @GetMapping("/all-orders-for-user")
+    public ResponseEntity<OrderReqRes> getOrder(@RequestBody OrderReqRes orderReqRes) {
+        OrderReqRes order = orderService.getAllOrdersForUser(orderReqRes);
+        return new ResponseEntity<>(order, HttpStatus.OK);
+    }
+
+    @GetMapping("/order-by-order-id")
+    public ResponseEntity<OrderReqRes> getOrderByOrderId(@RequestBody OrderReqRes orderReqRes) {
+        OrderReqRes order = orderService.getOrderByOrderId(orderReqRes);
+        return new ResponseEntity<>(order, HttpStatus.OK);
+    }
+
+
 //    // Get all orders (optional)
 //    @GetMapping
 //    public ResponseEntity<List<Order>> getAllOrders() {

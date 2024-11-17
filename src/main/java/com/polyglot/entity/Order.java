@@ -15,56 +15,16 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private List<OrderItem> orderItems;
+    @ElementCollection
+    private List<Integer> orderItems = new ArrayList<>();
 
-    private Integer totalPrice;
+    private Integer totalPrice = 0;
 
+    private boolean isPaymentDone = false;
+
+    private Integer userId;
     private String status;
 
     public Order() {}
 
-    // Constructor to create an Order from a Cart
-    public Order(Cart cart) {
-        this.orderItems = new ArrayList<>();
-//        for (CartItem cartItem : cart.getCartItems()) {
-//            this.orderItems.add(new OrderItem(cartItem));
-//        }
-        this.totalPrice = cart.getTotalPrice();
-        this.status = "PENDING";  // Default status
-    }
-
-    // Getters and Setters
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-    public Integer getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(Integer totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }
