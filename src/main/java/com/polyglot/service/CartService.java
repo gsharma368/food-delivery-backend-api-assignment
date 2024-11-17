@@ -40,7 +40,7 @@ public class CartService {
             Optional<OurUsers> userOptional = usersRepo.findById(cartReqRes.getUserId());
             if(!userOptional.isPresent()){
                 resp.setStatusCode(404);
-                resp.setMessage("User not found");
+                resp.setMessage("Dish not found");
                 return resp;
             }
             Cart userCart;
@@ -94,10 +94,10 @@ public class CartService {
                 List<Integer> userCartItemsIds = userCart.getCartItems();
                 userCartItemsIds.add(newCartItem.getId());
                 userCart.setCartItems(userCartItemsIds);
-                userCart = cartRepo.save(userCart);
                 newCartItem.setCartId(userCart.getId());
-                newCartItem = cartItemRepo.save(newCartItem);
+                cartRepo.save(userCart);
                 userOptional.get().setCartId(newCartItem.getCartId());
+                cartItemRepo.save(newCartItem);
                 OurUsers userUpdated = usersRepo.save(userOptional.get());
             }
 
@@ -147,7 +147,7 @@ public class CartService {
 
                     cartItemOptional.get().setQuantity(quantity);
                     cartItemOptional.get().setTotalPrice(price);
-                    CartItem cartItem = cartItemRepo.save(cartItemOptional.get());
+                    cartItemRepo.save(cartItemOptional.get());
 
                     cartItemsFinal.add(cartItemOptional.get());
                 }
